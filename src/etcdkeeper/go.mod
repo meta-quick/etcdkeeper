@@ -1,8 +1,5 @@
 module etcdkeeper
-
 go 1.21
-
-toolchain go1.23.2
 
 require (
 	github.com/coreos/etcd v3.3.15+incompatible
