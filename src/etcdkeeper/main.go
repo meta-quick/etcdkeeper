@@ -13,6 +13,7 @@ import (
 	"go.etcd.io/etcd/client/v3"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -96,9 +97,9 @@ func main() {
 	time.AfterFunc(86400*time.Second, func() {
 		sessmgr.GC()
 	})
-	//log.Println(http.Dir(rootPath + "/assets"))
-
-	http.Handle("/", http.FileServer(http.Dir(rootPath+"/assets"))) // view static directory
+	log.Println(http.Dir(rootPath + "/assets"))
+	http.Handle("/", http.FileServer(assets))
+	//http.Handle("/", http.FileServer(http.Dir(rootPath+"/assets"))) // view static directory
 
 	log.Printf("listening on %s:%d\n", *host, *port)
 	err = http.ListenAndServe(*host+":"+strconv.Itoa(*port), nil)
@@ -618,6 +619,21 @@ func connect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uinfo := &userInfo{host: host, uname: uname, passwd: passwd}
+
+	addr := host
+	if strings.HasPrefix(host, "http://") || strings.HasPrefix(host, "https://") {
+		addr = strings.Split(host, "://")[1]
+	}
+
+	conn, err := net.DialTimeout("tcp", addr, time.Duration(1)*time.Second)
+	if err != nil {
+		log.Println(r.Method, "v3", "TCP connection failed:", err)
+		b, _ := json.Marshal(map[string]interface{}{"status": "error", "message": "Failed to establish TCP connection: " + err.Error()})
+		io.WriteString(w, string(b))
+		return
+	}
+	conn.Close()
+
 	c, err := newClient(uinfo)
 	if err != nil {
 		log.Println(r.Method, "v3", "connect fail.")
