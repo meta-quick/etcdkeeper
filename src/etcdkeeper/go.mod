@@ -1,9 +1,12 @@
 module etcdkeeper
 
-go 1.20
+go 1.21
+
+toolchain go1.23.2
 
 require (
 	github.com/coreos/etcd v3.3.15+incompatible
+	github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92
 	go.etcd.io/etcd/client/v2 v2.305.15
 	go.etcd.io/etcd/client/v3 v3.5.8
 )
@@ -17,6 +20,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/shurcooL/httpfs v0.0.0-20230704072500-f1e31cf0ba5c // indirect
 	go.etcd.io/etcd/api/v3 v3.5.15 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.15 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
